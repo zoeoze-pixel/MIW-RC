@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#263b80">
+<title>MIW Return Calculator</title>
+<style>
+:root{--ink:#172033;--muted:#697386;--line:#dfe4ec;--paper:#fff;--wash:#f5f7fb;--blue:#3957c8;--pale:#eef1ff;--green:#08785c;--red:#b42318}*{box-sizing:border-box}body{margin:0;background:#edf0f5;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:980px;margin:auto;padding:20px}.panel,.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 5px 20px rgba(25,38,74,.05)}.panel{padding:22px;background:linear-gradient(145deg,#fff,#f7f8fc)}.card{padding:18px}.header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:20px}.title{font-size:24px;font-weight:850;letter-spacing:-.03em}.sub,.muted{font-size:13px;color:var(--muted)}.badge{padding:7px 10px;border-radius:999px;background:var(--pale);font-size:12px;font-weight:750;white-space:nowrap}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field label,.label{display:block;font-size:13px;font-weight:700;margin-bottom:7px}input,select{width:100%;min-height:48px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:0 13px;font-size:16px;color:var(--ink)}input:focus,select:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 3px var(--pale)}.paygrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:8px}.paybtn{min-height:50px;border:1px solid var(--line);background:#fff;border-radius:11px;font-size:14px;font-weight:750;color:var(--ink);cursor:pointer}.paybtn.active{border-color:var(--blue);background:var(--pale);color:#233b99;box-shadow:inset 0 0 0 1px var(--blue)}.space{height:14px}.results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.metric{font-size:25px;line-height:1.15;font-weight:850;letter-spacing:-.03em;margin:5px 0}.section-title{font-size:18px;font-weight:850;margin-bottom:4px}.year-controls{display:flex;gap:10px;align-items:end;margin-top:14px}.year-controls .field{flex:1}.reset{min-height:48px;padding:0 18px;border:1px solid var(--blue);border-radius:11px;background:var(--blue);color:#fff;font-weight:750;cursor:pointer}.chart{height:300px;display:flex;gap:16px;align-items:flex-end;padding:35px 10px 8px;border-bottom:1px solid var(--line);margin-top:14px}.barcol{flex:1;height:100%;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}.barvalue{font-size:12px;font-weight:750;margin-bottom:6px;white-space:nowrap}.bar{width:min(76%,100px);min-height:4px;border-radius:10px 10px 3px 3px;background:#7d8aa5;transition:height .25s ease}.barcol.selected .bar{background:var(--blue)}.barlabel{text-align:center;font-size:12px;color:var(--muted);margin-top:7px;font-weight:650}.scroll{overflow-x:auto;margin-top:14px}table{border-collapse:collapse;width:100%;font-size:13px;min-width:650px}th,td{padding:12px 9px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.025em}th:first-child,td:first-child{text-align:left}.selected-row{background:var(--pale);font-weight:750}.positive{color:var(--green)}.negative{color:var(--red)}.note{font-size:11px;line-height:1.55;color:var(--muted)}@media(max-width:640px){.app{padding:10px}.grid{grid-template-columns:1fr}.paygrid{grid-template-columns:repeat(2,1fr)}.results{grid-template-columns:1fr 1fr}.results .card:last-child{grid-column:1/-1}.metric{font-size:22px}.chart{gap:5px;height:250px;padding-left:0;padding-right:0}.barvalue{font-size:10px}.year-controls{flex-direction:column;align-items:stretch}.reset{width:100%}}
+</style>
+</head>
+<body>
+<main class="app" id="app">
+ <section class="panel">
+  <div class="header"><div><div class="title">MIW Return Calculator</div><div class="sub">Illustrative S&amp;P 500-linked return scenario</div></div><div class="badge">Illustrative · Not guaranteed</div></div>
+  <div class="grid">
+   <div class="field"><label for="premium">Total intended premium (S$)</label><input id="premium" type="number" inputmode="decimal" min="0" step="1000" value="300000"></div>
+   <div class="field"><label for="returnRate">Assumed annual S&amp;P 500 return (%)</label><input id="returnRate" type="number" inputmode="decimal" min="-100" max="100" step="0.5" value="12"></div>
+   <div class="field"><label for="age">Starting age</label><input id="age" type="number" inputmode="numeric" min="0" max="100" step="1" value="40"></div>
+   <div class="field"><label for="horizon">Projection horizon</label><select id="horizon"><option>10</option><option selected>20</option><option>30</option><option>40</option></select></div>
+  </div>
+  <div style="margin-top:16px"><span class="label">Premium payment option</span><div class="paygrid" id="payButtons">
+   <button class="paybtn active" type="button" data-key="single" aria-pressed="true">Single Pay</button>
+   <button class="paybtn" type="button" data-key="pay3" aria-pressed="false">3-Pay</button>
+   <button class="paybtn" type="button" data-key="pay5" aria-pressed="false">5-Pay</button>
+   <button class="paybtn" type="button" data-key="pay10" aria-pressed="false">10-Pay</button>
+  </div></div>
+ </section>
+ <div class="space"></div>
+ <section class="results" aria-live="polite">
+  <div class="card"><div class="muted">Annual premium</div><div class="metric" id="annualPremium">—</div><div class="muted" id="paymentText">—</div></div>
+  <div class="card"><div class="muted">Illustrative credited rate</div><div class="metric" id="creditRate">—</div><div class="muted">9% cap / 10% downside buffer</div></div>
+  <div class="card"><div class="muted">Projected value</div><div class="metric" id="projectedValue">—</div><div class="muted" id="projectionText">—</div></div>
+ </section>
+ <div class="space"></div>
+ <section class="card">
+  <div class="section-title">Policy Year View</div><div class="muted">Choose Year 1–40 to compare all four premium payment options.</div>
+  <div class="year-controls"><div class="field"><label for="policyYear">Selected policy year</label><select id="policyYear"></select></div><button class="reset" id="resetYear" type="button">Reset to Year 1</button></div>
+  <div class="chart" id="chart" aria-label="Projected values by pay option"></div>
+  <div class="scroll"><table><thead><tr><th>Pay option</th><th>Premium paid by year</th><th>Projected value</th><th>Gain / (loss)</th><th>Value / premium</th></tr></thead><tbody id="comparisonRows"></tbody></table></div>
+ </section>
+ <div class="space"></div>
+ <section class="card"><div class="section-title">Pay Option &amp; Annual Charge</div><div class="scroll"><table><thead><tr><th>Pay option</th><th>Charge p.a.*</th><th>Annual premium</th><th>Total intended premium</th></tr></thead><tbody id="chargeRows"></tbody></table></div></section>
+ <div class="space"></div>
+ <section class="card note"><strong>Model assumptions:</strong> Premium is added at the start of each applicable policy year. The annual charge applies to the value after that year’s premium is added for Policy Years 1–10. Positive assumed index returns are capped at 9% p.a.; negative assumed returns receive a 10% downside buffer. This is an approximate planning tool, not an insurer-issued policy illustration. Confirm actual policy values and terms using official Manulife documents.</section>
+</main>
+<script>
+(()=>{
+ const OPTIONS={
+  single:{label:'Single Pay',years:1,charge:0.0085},
+  pay3:{label:'3-Pay',years:3,charge:0.0100},
+  pay5:{label:'5-Pay',years:5,charge:0.0110},
+  pay10:{label:'10-Pay',years:10,charge:0.0160}
+ };
+ const KEYS=['single','pay3','pay5','pay10'];
+ const el=id=>document.getElementById(id);
+ let selectedKey='single';
+ for(let y=1;y<=40;y++){const o=document.createElement('option');o.value=String(y);o.textContent='Policy Year '+y;el('policyYear').append(o)}
+ const number=(id,fallback=0)=>{const n=Number(el(id).value);return Number.isFinite(n)?n:fallback};
+ const money=n=>'S$'+Math.round(Number.isFinite(n)?n:0).toLocaleString('en-SG');
+ const percent=n=>(n*100).toFixed(1)+'%';
+ function simulate(key,totalPremium,spReturn,years){
+  const option=OPTIONS[key];
+  if(!option) throw new Error('Unknown pay option: '+key);
+  const annualPremium=totalPremium/option.years;
+  const creditedRate=spReturn>=0?Math.min(spReturn,0.09):Math.min(0,spReturn+0.10);
+  let value=0,paid=0; const rows=[];
+  for(let year=1;year<=years;year++){
+   const contribution=year<=option.years?annualPremium:0;
+   paid+=contribution;
+   const charge=year<=10?-(value+contribution)*option.charge:0;
+   const afterCharge=value+contribution+charge;
+   value=Math.max(0,afterCharge+(afterCharge*creditedRate));
+   rows.push({year,paid,value,charge,contribution});
+  }
+  return {option,annualPremium,creditedRate,rows};
+ }
+ function render(){
+  const premium=Math.max(0,number('premium'));
+  const spReturn=Math.max(-1,Math.min(1,number('returnRate')/100));
+  const age=Math.max(0,number('age'));
+  const horizon=Math.max(1,Math.min(40,number('horizon',20)));
+  const year=Math.max(1,Math.min(40,number('policyYear',1)));
+  const current=simulate(selectedKey,premium,spReturn,40);
+  const atHorizon=current.rows[horizon-1];
+  el('annualPremium').textContent=money(current.annualPremium);
+  el('paymentText').textContent=current.option.years===1?'one payment at policy start':current.option.years+' annual payments';
+  el('creditRate').textContent=percent(current.creditedRate);
+  el('projectedValue').textContent=money(atHorizon.value);
+  el('projectionText').textContent='Policy Year '+horizon+' · age '+(age+horizon);
+  const comparisons=KEYS.map(key=>{const s=simulate(key,premium,spReturn,year);const r=s.rows[year-1];return{key,s,r,gain:r.value-r.paid,multiple:r.paid?r.value/r.paid:0}});
+  const maxValue=Math.max(1,...comparisons.map(x=>x.r.value));
+  el('chart').innerHTML=comparisons.map(x=>`<div class="barcol ${x.key===selectedKey?'selected':''}"><div class="barvalue">${money(x.r.value)}</div><div class="bar" style="height:${Math.max(4,x.r.value/maxValue*210)}px"></div><div class="barlabel">${x.s.option.label}</div></div>`).join('');
+  el('comparisonRows').innerHTML=comparisons.map(x=>`<tr class="${x.key===selectedKey?'selected-row':''}"><td>${x.s.option.label}</td><td>${money(x.r.paid)}</td><td>${money(x.r.value)}</td><td class="${x.gain>=0?'positive':'negative'}">${money(x.gain)}</td><td>${x.multiple.toFixed(2)}×</td></tr>`).join('');
+  el('chargeRows').innerHTML=KEYS.map(key=>{const o=OPTIONS[key];return`<tr><td>${o.label}</td><td>${percent(o.charge)}</td><td>${money(premium/o.years)}</td><td>${money(premium)}</td></tr>`}).join('');
+ }
+ el('payButtons').addEventListener('click',e=>{const b=e.target.closest('[data-key]');if(!b)return;selectedKey=b.dataset.key;document.querySelectorAll('[data-key]').forEach(x=>{const active=x.dataset.key===selectedKey;x.classList.toggle('active',active);x.setAttribute('aria-pressed',String(active))});render()});
+ ['premium','returnRate','age','horizon','policyYear'].forEach(id=>el(id).addEventListener(id==='policyYear'?'change':'input',render));
+ el('resetYear').addEventListener('click',()=>{el('policyYear').value='1';render()});
+ render();
+ window.MIWCalculator={simulate,render,options:OPTIONS,get selectedKey(){return selectedKey}};
+})();
+</script>
+</body>
+</html>
